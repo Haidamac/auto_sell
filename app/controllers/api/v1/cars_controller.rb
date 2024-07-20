@@ -85,7 +85,6 @@ class Api::V1::CarsController < ApplicationController
 
   def set_car
     @car = policy_scope(Car).find(params[:id])
-    # @car = Car.find(params[:id])
   end
 
   def edit_car

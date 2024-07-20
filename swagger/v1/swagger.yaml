@@ -17,6 +17,39 @@ tags:
 - name: Admins Cars
   description: operate with car adverts by admins
 paths:
+  "/api/v1/admins/create_admin":
+    post:
+      summary: create admin
+      tags:
+      - Users Admin
+      description: Creates a new admin
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: successful created
+        '401':
+          description: unauthorized
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+        required: true
   "/api/v1/auth/login":
     post:
       summary: authentication user
