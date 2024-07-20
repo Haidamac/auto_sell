@@ -30,7 +30,7 @@ class Api::V1::UsersController < ApplicationController
     authorize @user
 
     if @user.save
-      UserMailer.user_welcome(@user).deliver_later
+      #UserMailer.user_welcome(@user).deliver_later
       render json: @user, status: :created
     else
       render json: { errors: @user.errors.full_messages },
@@ -38,7 +38,19 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  # DELETE api/v1/users/{name}
+  # PUT/PATCH api/v1/users/{id}
+  def update
+    authorize @user
+
+    if @user.update(user_params)
+      render json: @user, status: :ok
+    else
+      render json: { errors: @user.errors.full_messages },
+             status: :unprocessable_entity
+    end
+  end
+
+  # DELETE api/v1/users/{id}
   def destroy
     authorize @user
 
@@ -56,7 +68,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:name, :email, :password)
+    params.permit(:name, :email, :password, :phone)
   end
 
   def authorize_policy

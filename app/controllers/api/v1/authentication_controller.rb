@@ -1,6 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
   skip_before_action :authenticate_request
-  before_action :current_user, only: :user_id
+  before_action :current_user, except: :login
 
   # Post api/v1/auth/login
   def login

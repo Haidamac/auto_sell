@@ -41,6 +41,9 @@ gem 'image_processing', '~> 1.12', '>= 1.12.2'
 # A fast JSON:API serializer for Ruby Objects
 gem 'jsonapi-serializer', '~> 2.2'
 
+# A Ruby binding to the Ed25519 elliptic curve public-key signature system described in RFC 8032.
+gem 'ed25519', '~> 1.3'
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
 
