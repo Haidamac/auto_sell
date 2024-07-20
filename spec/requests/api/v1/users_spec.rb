@@ -4,7 +4,7 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/users', type: :request do
 
   path '/api/v1/users' do
-    get('list users') do
+    get('list all users') do
       tags 'Users Admin'
       produces 'application/json'
       security [jwt_auth: []]

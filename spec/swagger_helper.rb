@@ -26,7 +26,7 @@ RSpec.configure do |config|
           description: 'User operating for participant' },
         { name: 'Users Admin',
           description: 'User operating for admin' },
-        { name: 'Car',
+        { name: 'Car Adverts',
           description: 'Views of car adverts for all' },
         { name: 'Sellers Cars',
           description: 'operate with car adverts by sellers' },

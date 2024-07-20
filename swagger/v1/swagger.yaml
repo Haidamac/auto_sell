@@ -10,7 +10,7 @@ tags:
   description: User operating for participant
 - name: Users Admin
   description: User operating for admin
-- name: Car
+- name: Car Adverts
   description: Views of car adverts for all
 - name: Sellers Cars
   description: operate with car adverts by sellers
@@ -82,9 +82,10 @@ paths:
         required: true
   "/api/v1/cars":
     get:
-      summary: list car - approved for all
+      summary: list car adverts - approved for all / pending and rejected for owner
+        and admins
       tags:
-      - Car
+      - Car Adverts
       security:
       - jwt_auth: []
       parameters:
@@ -102,7 +103,7 @@ paths:
         '200':
           description: successful
     post:
-      summary: create new car
+      summary: create new car advert
       tags:
       - Sellers Cars
       description: Creates a new car advert
@@ -171,9 +172,10 @@ paths:
       schema:
         type: string
     get:
-      summary: show car - approved for all
+      summary: show car advert - approved for all / pending and rejected for owner
+        and admins
       tags:
-      - Car
+      - Car Adverts
       security:
       - jwt_auth: []
       responses:
@@ -182,8 +184,7 @@ paths:
         '404':
           description: not found
     put:
-      summary: 'update car: status by admin: approved/rejected, by participant his
-        own only'
+      summary: update car advert by owner only
       tags:
       - Sellers Cars
       security:
@@ -223,15 +224,36 @@ paths:
                 volume:
                   type: number
                   format: float
-                status:
-                  type: string
                 images[]:
                   type: array
                   items:
                     type: string
                     format: binary
+    patch:
+      summary: update status (approved/rejected) by admin
+      tags:
+      - Admins Cars
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+        required: true
     delete:
-      summary: delete car adverts - for admin all, for partner his own only
+      summary: delete car adverts - for admin all, for participant his own only
       tags:
       - Sellers Cars
       security:
@@ -340,7 +362,7 @@ paths:
         required: true
   "/api/v1/users":
     get:
-      summary: list users
+      summary: list all users
       tags:
       - Users Admin
       security:

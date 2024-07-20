@@ -7,8 +7,8 @@ RSpec.describe 'api/v1/cars', type: :request do
   let(:headers) { { 'Authorization' => "Bearer #{token}" } }
 
   path '/api/v1/cars' do
-    get('list car - approved for all') do
-      tags 'Car'
+    get('list car adverts - approved for all / pending and rejected for owner and admins') do
+      tags 'Car Adverts'
       produces 'application/json'
       security [jwt_auth: []]
       parameter name: :user_id, in: :query, schema: { type: :integer },
@@ -31,7 +31,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       end
     end
 
-    post('create new car') do
+    post('create new car advert') do
       tags 'Sellers Cars'
       description 'Creates a new car advert'
       consumes 'multipart/form-data'
@@ -102,8 +102,8 @@ RSpec.describe 'api/v1/cars', type: :request do
     let(:Authorization) { headers['Authorization'] }
     let!(:car) { create(:car, user_id: user.id) }
 
-    get('show car - approved for all') do
-      tags 'Car'
+    get('show car advert - approved for all / pending and rejected for owner and admins') do
+      tags 'Car Adverts'
       security [jwt_auth: []]
 
       response(200, 'successful') do
@@ -127,7 +127,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       end
     end
 
-    put('update car: status by admin: approved/rejected, by participant his own only') do
+    put('update car advert by owner only') do
       tags 'Sellers Cars'
       consumes 'multipart/form-data'
       security [jwt_auth: []]
@@ -145,7 +145,6 @@ RSpec.describe 'api/v1/cars', type: :request do
                     fuel: { type: :string },
                     year: { type: :integer },
                     volume: { type: :number, format: :float },
-                    status: { type: :string },
                     'images[]':
                       {
                         type: :array,
@@ -165,9 +164,9 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         run_test! do
           car.update(brand: 'The Ukrainian Motors')
-          expect(car.find_by(name: 'The Ukrainian Motors')).to eq(car)
+          expect(car.find_by(brand: 'The Ukrainian Motors')).to eq(car)
           car.update(color: 'Maroon')
-          expect(car.find_by(description: 'Maroon')).to eq(car)
+          expect(car.find_by(color: 'Maroon')).to eq(car)
         end
       end
 
@@ -194,7 +193,59 @@ RSpec.describe 'api/v1/cars', type: :request do
       end
     end
 
-    delete('delete car adverts - for admin all, for partner his own only') do
+    patch('update status (approved/rejected) by admin') do
+      tags 'Admins Cars'
+      consumes 'application/json'
+      security [jwt_auth: []]
+      parameter name: :car,
+                in: :body,
+                required: true,
+                schema: {
+                  type: :object,
+                  properties: {
+                    status: { type: :string }
+                  }
+                }
+
+      response(200, 'successful') do
+        let(:id) { car.id }
+
+        it 'returns a 200 response' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        run_test! do
+          car.update(status: 2)
+          expect(car.find_by(status: 'approved')).to eq(car)
+          car.update(status: 1)
+          expect(car.find_by(status: 'rejected')).to eq(car)
+        end
+      end
+
+      response(401, 'unauthorized') do
+        let(:id) { car.id }
+        let!(:user) { create(:user) }
+        let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
+        let(:headers) { { 'Authorization' => "Bearer #{token}" } }
+        let(:Authorization) { headers['Authorization'] }
+
+        run_test! do |response|
+          car.update(status: 2)
+          expect(response.status).to eq(401)
+        end
+      end
+
+      response(404, 'not found') do
+        let(:id) { 'invalid' }
+        let(:car_attributes) { attributes_for(:car) }
+
+        run_test! do
+          expect(response.status).to eq(404)
+        end
+      end
+    end
+
+    delete('delete car adverts - for admin all, for participant his own only') do
       tags 'Sellers Cars'
       security [jwt_auth: []]
 
