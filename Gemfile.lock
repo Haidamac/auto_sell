@@ -94,6 +94,11 @@ GEM
     drb (2.2.1)
     ed25519 (1.3.0)
     erubi (1.13.0)
+    factory_bot (6.4.6)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.4.3)
+      factory_bot (~> 6.4)
+      railties (>= 5.0.0)
     ffi (1.17.0-aarch64-linux-gnu)
     ffi (1.17.0-arm-linux-gnu)
     ffi (1.17.0-arm64-darwin)
@@ -266,6 +271,7 @@ DEPENDENCIES
   bootsnap
   debug
   ed25519 (~> 1.3)
+  factory_bot_rails (~> 6.4, >= 6.4.3)
   image_processing (~> 1.12, >= 1.12.2)
   jsonapi-serializer (~> 2.2)
   jwt (~> 2.8, >= 2.8.2)

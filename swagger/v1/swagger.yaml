@@ -419,11 +419,6 @@ paths:
       summary: show user
       tags:
       - Users
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       security:
       - jwt_auth: []
       responses:

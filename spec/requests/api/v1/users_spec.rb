@@ -10,7 +10,7 @@ RSpec.describe 'api/v1/users', type: :request do
       security [jwt_auth: []]
       parameter name: :role, in: :query, schema: { type: :string },
                 description: 'admin/participant'
-      let!(:user) { create(:user, role: 'admin') }
+      let!(:user) { create(:user, :admin) }
       let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
       let(:headers) { { 'Authorization' => "Bearer #{token}" } }
       let(:Authorization) { headers['Authorization'] }
@@ -90,14 +90,9 @@ RSpec.describe 'api/v1/users', type: :request do
 
     get('show user') do
       tags 'Users'
-      parameter name: :Authorization, in: :header, type: :string
       security [jwt_auth: []]
 
       response(200, 'successful') do
-        # before do
-        #   user.save
-        # end
-
         let(:Authorization) { headers['Authorization'] }
 
         it 'should returns status response' do

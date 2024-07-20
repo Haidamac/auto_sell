@@ -55,6 +55,8 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem 'rspec-rails'
   gem 'rswag-specs', '~> 2.13'
+  # fixtures replacement for tests
+  gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
 end
 
 group :development do
