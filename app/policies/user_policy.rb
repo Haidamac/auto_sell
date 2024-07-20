@@ -19,6 +19,10 @@ class UserPolicy < ApplicationPolicy
     end
   end
 
+  def permitted_attributes
+      [:name, :phone]
+  end
+
   def index?
     user.admin?
   end

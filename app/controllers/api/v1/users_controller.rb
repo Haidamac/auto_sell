@@ -43,7 +43,7 @@ class Api::V1::UsersController < ApplicationController
   def update
     authorize @user
 
-    if @user.update(user_params)
+    if @user.update(edit_user_params)
       render json: @user, status: :ok
     else
       render json: { errors: @user.errors.full_messages },
@@ -74,6 +74,10 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
     params.permit(:name, :email, :password, :phone)
+  end
+
+  def edit_user_params
+    params.permit(policy(@user).permitted_attributes)
   end
 
   def authorize_policy

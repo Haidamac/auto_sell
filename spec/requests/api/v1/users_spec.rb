@@ -130,16 +130,16 @@ RSpec.describe 'api/v1/users', type: :request do
 
     put('update user') do
       tags 'Users'
-      consumes 'application/json'
+      consumes 'multipart/form-data'
       security [jwt_auth: []]
-      parameter name: :user,
-                in: :body,
+      parameter name: :car,
+                in: :formData,
                 schema: {
                   type: :object,
                   properties: {
                     name: { type: :string },
                     phone: { type: :string },
-                  },
+                  }
                 }
 
       response(200, 'successful') do
