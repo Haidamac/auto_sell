@@ -44,16 +44,20 @@ gem 'jsonapi-serializer', '~> 2.2'
 # A Ruby binding to the Ed25519 elliptic curve public-key signature system described in RFC 8032.
 gem 'ed25519', '~> 1.3'
 
+# Generate API documentation and rspec integration tests
+gem 'rswag', '~> 2.13'
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+gem "rack-cors"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  gem 'rspec-rails'
+  gem 'rswag-specs', '~> 2.13'
 end
 
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-

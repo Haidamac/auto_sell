@@ -1,0 +1,404 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+tags:
+- name: Users
+  description: User operating for all roles
+- name: Users Participant
+  description: User operating for participant
+- name: Users Admin
+  description: User operating for admin
+- name: Car
+  description: Views of car adverts for all
+- name: Sellers Cars
+  description: operate with car adverts by sellers
+- name: Admins Cars
+  description: operate with car adverts by admins
+paths:
+  "/api/v1/auth/login":
+    post:
+      summary: authentication user
+      tags:
+      - Users
+      description: authentication user
+      parameters: []
+      responses:
+        '201':
+          description: successful created
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+        required: true
+  "/api/v1/cars":
+    get:
+      summary: list car - approved for all
+      tags:
+      - Car
+      security:
+      - jwt_auth: []
+      parameters:
+      - name: user_id
+        in: query
+        schema:
+          type: integer
+        description: Filter on participant
+      - name: status
+        in: query
+        schema:
+          type: string
+        description: 'Filter on status: pending/rejected/approved'
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create new car
+      tags:
+      - Sellers Cars
+      description: Creates a new car advert
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: successful created
+        '401':
+          description: unauthorized
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                brand:
+                  type: string
+                car_model:
+                  type: string
+                body:
+                  type: string
+                mileage:
+                  type: number
+                  format: float
+                color:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                fuel:
+                  type: string
+                year:
+                  type: integer
+                volume:
+                  type: number
+                  format: float
+                user_id:
+                  type: string
+                images[]:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+              - brand
+              - car_model
+              - body
+              - mileage
+              - color
+              - price
+              - fuel
+              - year
+              - volume
+              - user_id
+        required: true
+  "/api/v1/cars/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: car id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show car - approved for all
+      tags:
+      - Car
+      security:
+      - jwt_auth: []
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
+    put:
+      summary: 'update car: status by admin: approved/rejected, by participant his
+        own only'
+      tags:
+      - Sellers Cars
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                brand:
+                  type: string
+                car_model:
+                  type: string
+                body:
+                  type: string
+                mileage:
+                  type: number
+                  format: float
+                color:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                fuel:
+                  type: string
+                year:
+                  type: integer
+                volume:
+                  type: number
+                  format: float
+                status:
+                  type: string
+                images[]:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+    delete:
+      summary: delete car adverts - for admin all, for partner his own only
+      tags:
+      - Sellers Cars
+      security:
+      - jwt_auth: []
+      responses:
+        '200':
+          description: ok
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+  "/api/v1/password/forgot":
+    post:
+      summary: forgot password
+      tags:
+      - Users
+      description: forgot users password
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+              - email
+        required: true
+  "/api/v1/password/reset":
+    post:
+      summary: reset password
+      tags:
+      - Users
+      description: reset password
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                token:
+                  type: string
+              required:
+              - email
+              - password
+              - token
+        required: true
+  "/api/v1/password/update":
+    put:
+      summary: update password
+      tags:
+      - Users
+      description: update password
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                new_password:
+                  type: string
+                confirm_password:
+                  type: string
+              required:
+              - old_password
+              - new_password
+              - confirm_password
+        required: true
+  "/api/v1/users":
+    get:
+      summary: list users
+      tags:
+      - Users Admin
+      security:
+      - jwt_auth: []
+      parameters:
+      - name: role
+        in: query
+        schema:
+          type: string
+        description: admin/participant
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+    post:
+      summary: create user
+      tags:
+      - Users Participant
+      parameters: []
+      responses:
+        '201':
+          description: successful created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+        required: true
+  "/api/v1/users/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: user id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show user
+      tags:
+      - Users
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      security:
+      - jwt_auth: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+    delete:
+      summary: delete user
+      tags:
+      - Users
+      security:
+      - jwt_auth: []
+      responses:
+        '200':
+          description: no content
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: 127.0.0.1:3000
+components:
+  securitySchemes:
+    jwt_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

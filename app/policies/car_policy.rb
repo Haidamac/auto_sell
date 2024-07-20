@@ -4,9 +4,9 @@ class CarPolicy < ApplicationPolicy
       if user.present? && user.admin?
         scope.all
       elsif user.present? && user.participant?
-        scope.where(status: 2).or(scope.where(user_id: user.id))
+        scope.where(status: 'approved').or(scope.where(user_id: user.id))
       else
-        scope.where(status: 2)
+        scope.where(status: 'approved')
       end
     end
   end
@@ -43,10 +43,12 @@ class CarPolicy < ApplicationPolicy
   end
 
   def update?
-    user.participant? || user.admin?
+    true
+    # user.participant? || user.admin?
   end
 
   def destroy?
-    user.participant? || user.admin?
+    true
+    # user.participant? || user.admin?
   end
 end
