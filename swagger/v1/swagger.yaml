@@ -433,6 +433,30 @@ paths:
           description: unauthorized
         '404':
           description: not found
+    put:
+      summary: update user
+      tags:
+      - Users
+      security:
+      - jwt_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: unauthorized
+        '404':
+          description: not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
     delete:
       summary: delete user
       tags:

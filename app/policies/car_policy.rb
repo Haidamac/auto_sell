@@ -44,11 +44,9 @@ class CarPolicy < ApplicationPolicy
 
   def update?
     true
-    # user.participant? || user.admin?
   end
 
   def destroy?
     true
-    # user.participant? || user.admin?
   end
 end

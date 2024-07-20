@@ -1,7 +1,8 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
   before_action :authorize_policy
-  before_action :set_user, only: %i[show update destroy]
+  before_action :set_user, only: [:show]
+  before_action :edit_user, only: %i[update destroy]
 
   # GET api/v1/users
   def index
@@ -65,6 +66,10 @@ class Api::V1::UsersController < ApplicationController
 
   def set_user
     @user = policy_scope(User).find(params[:id])
+  end
+
+  def edit_user
+    @user = UserPolicy::EditScope.new(current_user, User).resolve.find(params[:id])
   end
 
   def user_params

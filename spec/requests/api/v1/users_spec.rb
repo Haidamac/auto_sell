@@ -128,6 +128,58 @@ RSpec.describe 'api/v1/users', type: :request do
       end
     end
 
+    put('update user') do
+      tags 'Users'
+      consumes 'application/json'
+      security [jwt_auth: []]
+      parameter name: :user,
+                in: :body,
+                schema: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string },
+                    phone: { type: :string },
+                  },
+                }
+
+      response(200, 'successful') do
+        let(:id) { user.id }
+
+        it 'returns a 200 response' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        run_test! do
+          user.update(name: 'Pylyp')
+          expect(user.find_by(name: 'Pylyp')).to eq(user)
+          user.update(phone: '+380100000004')
+          expect(user.find_by(phone: '+380100000004')).to eq(user)
+        end
+      end
+
+      response(401, 'unauthorized') do
+        let(:id) { user.id }
+        let!(:user) { create(:user) }
+        let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
+        let(:headers) { { 'Authorization' => "Bearer #{token}" } }
+        let(:Authorization) { headers['Authorization'] }
+
+        run_test! do |response|
+          user.update(name: 'Foma')
+          expect(response.status).to eq(401)
+        end
+      end
+
+      response(404, 'not found') do
+        let(:id) { 'invalid' }
+        let(:user_attributes) { attributes_for(:user) }
+
+        run_test! do
+          expect(response.status).to eq(404)
+        end
+      end
+    end
+
     delete('delete user') do
       tags 'Users'
       security [jwt_auth: []]
