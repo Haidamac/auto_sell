@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/cars', type: :request do
-  let!(:user) { create(:user, role: 'partner') }
+  let!(:user) { create(:user, role: 'participant') }
   let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
   let(:headers) { { 'Authorization' => "Bearer #{token}" } }
 
@@ -17,13 +17,13 @@ RSpec.describe 'api/v1/cars', type: :request do
                 description: 'Filter on status: pending/rejected/approved'
 
       let(:Authorization) { headers['Authorization'] }
-      let!(:car1) { create(:car, user_id: user.id, brand: 'BMW') }
-      let!(:car2) { create(:car, user_id: user.id, brand: 'Tesla') }
+      let!(:car1) { create(:car, user: user, brand: 'BMW') }
+      let!(:car2) { create(:car, user: user, brand: 'Tesla') }
       let(:user_id) { nil }
       let(:status) { 'pending' }
 
       response(200, 'successful') do
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(200)
         end
 
@@ -51,7 +51,7 @@ RSpec.describe 'api/v1/cars', type: :request do
                     fuel: { type: :string },
                     year: { type: :integer },
                     volume: { type: :number, format: :float },
-                    user_id: { type: :string },
+                    user_id: { type: :integer },
                     'images[]':
                       {
                         type: :array,
@@ -65,19 +65,23 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response(201, 'successful created') do
         let(:Authorization) { headers['Authorization'] }
-        let!(:car) { build_stubbed(:car, brand: 'Subaru', user_id: user.id) }
+        # let!(:user_id) { 99 }
+        let(:car) { attributes_for(:car).merge(user_id: user.id) }
+
+        before do
+          puts "Request parameters: #{car}"  # Log the request parameters
+        end
 
         run_test! do
-          expect(car.find_by(name: 'Abscdgytraed')).to eq(car)
           expect(response.status).to eq(201)
           json = JSON.parse(response.body).deep_symbolize_keys
-          expect(json[:brand]).to eq(car.brand)
+          expect(json[:brand]).to eq(car[:brand])
         end
       end
 
       response(401, 'unauthorized') do
         let(:Authorization) { nil }
-        let!(:car) { build(:car, user_id: user.id) }
+        let(:car) { attributes_for(:car).merge(user_id: user.id) }
 
         run_test! do
           expect(response.status).to eq(401)
@@ -86,8 +90,8 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response(422, 'invalid request') do
         let(:Authorization) { headers['Authorization'] }
-        let!(:car) do
-          { brand: 'Test car', car_model: 'A test car', fuel: 'gas', user_id: user.id }
+        let(:car) do
+          { brand: '', car_model: '', body: '', mileage: nil, color: '', price: nil, fuel: '', year: nil, volume: nil, user_id: user.id }
         end
 
         run_test! do
@@ -100,7 +104,7 @@ RSpec.describe 'api/v1/cars', type: :request do
   path '/api/v1/cars/{id}' do
     parameter name: :id, in: :path, type: :string, description: 'car id'
     let(:Authorization) { headers['Authorization'] }
-    let!(:car) { create(:car, user_id: user.id) }
+    let!(:car) { create(:car, user: user) }
 
     get('show car advert - approved for all / pending and rejected for owner and admins') do
       tags 'Car Adverts'
@@ -109,7 +113,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response(200, 'successful') do
         let(:id) { car.id }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(200)
         end
 
@@ -119,7 +123,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response(404, 'not found') do
         let(:id) { 'invalid' }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(404)
         end
 
@@ -157,6 +161,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response(200, 'successful') do
         let(:id) { car.id }
+        let(:Authorization) { headers['Authorization'] }
 
         it 'returns a 200 response' do
           expect(response).to have_http_status(:ok)
@@ -164,28 +169,24 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         run_test! do
           car.update(brand: 'The Ukrainian Motors')
-          expect(car.find_by(brand: 'The Ukrainian Motors')).to eq(car)
+          expect(Car.find_by(brand: 'The Ukrainian Motors')).to eq(car)
           car.update(color: 'Maroon')
-          expect(car.find_by(color: 'Maroon')).to eq(car)
+          expect(Car.find_by(color: 'Maroon')).to eq(car)
         end
       end
 
       response(401, 'unauthorized') do
         let(:id) { car.id }
-        let!(:user) { create(:user) }
-        let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
-        let(:headers) { { 'Authorization' => "Bearer #{token}" } }
-        let(:Authorization) { headers['Authorization'] }
+        let(:Authorization) { nil }
 
-        run_test! do |response|
-          car.update(brand: 'The Ukrainian Motors')
+        run_test! do
           expect(response.status).to eq(401)
         end
       end
 
       response(404, 'not found') do
         let(:id) { 'invalid' }
-        let(:car_attributes) { attributes_for(:car) }
+        let(:Authorization) { headers['Authorization'] }
 
         run_test! do
           expect(response.status).to eq(404)
@@ -209,35 +210,32 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response(200, 'successful') do
         let(:id) { car.id }
+        let(:Authorization) { headers['Authorization'] }
 
         it 'returns a 200 response' do
           expect(response).to have_http_status(:ok)
         end
 
         run_test! do
-          car.update(status: 2)
-          expect(car.find_by(status: 'approved')).to eq(car)
-          car.update(status: 1)
-          expect(car.find_by(status: 'rejected')).to eq(car)
+          car.update(status: 'approved')
+          expect(Car.find_by(status: 'approved')).to eq(car)
+          car.update(status: 'rejected')
+          expect(Car.find_by(status: 'rejected')).to eq(car)
         end
       end
 
       response(401, 'unauthorized') do
         let(:id) { car.id }
-        let!(:user) { create(:user) }
-        let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
-        let(:headers) { { 'Authorization' => "Bearer #{token}" } }
-        let(:Authorization) { headers['Authorization'] }
+        let(:Authorization) { nil }
 
-        run_test! do |response|
-          car.update(status: 2)
+        run_test! do
           expect(response.status).to eq(401)
         end
       end
 
       response(404, 'not found') do
         let(:id) { 'invalid' }
-        let(:car_attributes) { attributes_for(:car) }
+        let(:Authorization) { headers['Authorization'] }
 
         run_test! do
           expect(response.status).to eq(404)
@@ -251,6 +249,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response(200, 'ok') do
         let(:id) { car.id }
+        let(:Authorization) { headers['Authorization'] }
 
         run_test! do
           expect(response.status).to eq(200)

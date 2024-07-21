@@ -144,8 +144,6 @@ paths:
                 volume:
                   type: number
                   format: float
-                user_id:
-                  type: string
                 images[]:
                   type: array
                   items:
@@ -161,7 +159,6 @@ paths:
               - fuel
               - year
               - volume
-              - user_id
         required: true
   "/api/v1/cars/{id}":
     parameters:

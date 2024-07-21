@@ -17,7 +17,7 @@ RSpec.describe 'api/v1/users', type: :request do
       let(:role) { nil }
 
       response(200, 'successful') do
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(200)
           expect(JSON.parse(response.body)).to eq(User.all.as_json)
         end
@@ -31,7 +31,7 @@ RSpec.describe 'api/v1/users', type: :request do
         let(:headers) { { 'Authorization' => "Bearer #{token}" } }
         let(:Authorization) { headers['Authorization'] }
         let(:role) { nil }
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(401)
         end
 
@@ -59,7 +59,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(201, 'successful created') do
         let(:user) { { name: 'John', email: 'john@example.com', password: 'Password123!' } }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(201)
           json = JSON.parse(response.body).deep_symbolize_keys
           expect(json[:email]).to eq('john@example.com')
@@ -72,7 +72,7 @@ RSpec.describe 'api/v1/users', type: :request do
 
       response(422, 'invalid request') do
         let(:user) { { name: '', email: '', password: '' } }
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(422)
         end
 
@@ -95,7 +95,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(200, 'successful') do
         let(:Authorization) { headers['Authorization'] }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(200)
         end
 
@@ -105,7 +105,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(401, 'unauthorized') do
         let(:Authorization) { nil }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(401)
         end
 
@@ -115,7 +115,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(404, 'not found') do
         let(:id) { 'invalid' }
         let(:Authorization) { headers['Authorization'] }
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(404)
         end
 
@@ -127,7 +127,7 @@ RSpec.describe 'api/v1/users', type: :request do
       tags 'Users'
       consumes 'multipart/form-data'
       security [jwt_auth: []]
-      parameter name: :car,
+      parameter name: :user,
                 in: :formData,
                 schema: {
                   type: :object,
@@ -138,7 +138,7 @@ RSpec.describe 'api/v1/users', type: :request do
                 }
 
       response(200, 'successful') do
-        let(:id) { user.id }
+        let(:Authorization) { headers['Authorization'] }
 
         it 'returns a 200 response' do
           expect(response).to have_http_status(:ok)
@@ -146,28 +146,23 @@ RSpec.describe 'api/v1/users', type: :request do
 
         run_test! do
           user.update(name: 'Pylyp')
-          expect(user.find_by(name: 'Pylyp')).to eq(user)
+          expect(User.find_by(name: 'Pylyp')).to eq(user)
           user.update(phone: '+380100000004')
-          expect(user.find_by(phone: '+380100000004')).to eq(user)
+          expect(User.find_by(phone: '+380100000004')).to eq(user)
         end
       end
 
       response(401, 'unauthorized') do
-        let(:id) { user.id }
-        let!(:user) { create(:user) }
-        let(:token) { JWT.encode({ user_id: user.id }, Rails.application.secret_key_base) }
-        let(:headers) { { 'Authorization' => "Bearer #{token}" } }
-        let(:Authorization) { headers['Authorization'] }
+        let(:Authorization) { nil }
 
-        run_test! do |response|
-          user.update(name: 'Foma')
+        run_test! do
           expect(response.status).to eq(401)
         end
       end
 
       response(404, 'not found') do
         let(:id) { 'invalid' }
-        let(:user_attributes) { attributes_for(:user) }
+        let(:Authorization) { headers['Authorization'] }
 
         run_test! do
           expect(response.status).to eq(404)
@@ -182,7 +177,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(200, 'no content') do
         let(:Authorization) { headers['Authorization'] }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(200)
         end
 
@@ -192,7 +187,7 @@ RSpec.describe 'api/v1/users', type: :request do
       response(401, 'unauthorized') do
         let(:Authorization) { nil }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(401)
         end
 
@@ -203,7 +198,7 @@ RSpec.describe 'api/v1/users', type: :request do
         let(:id) { 'invalid' }
         let(:Authorization) { headers['Authorization'] }
 
-        it 'should returns status response' do
+        it 'should return status response' do
           expect(response.status).to eq(404)
         end
 
