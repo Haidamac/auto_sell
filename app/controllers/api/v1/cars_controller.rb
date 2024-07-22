@@ -45,6 +45,7 @@ class Api::V1::CarsController < ApplicationController
     authorize @car
 
     build_images if params[:images].present?
+    @car = current_user.cars.build(car_params)
     if @car.save
       car_json
     else
@@ -92,9 +93,7 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def car_params
-    params.permit(:brand, :car_model, :body, :mileage, :color, :price, :fuel, :year, :volume,
-                  :user_id, images: [])
-    # params.permit(:brand, :car_model, :body, :mileage, :color, :price, :fuel, :year, :volume, images: [])
+    params.permit(:brand, :car_model, :body, :mileage, :color, :price, :fuel, :year, :volume, images: [])
   end
 
   def edit_car_params
