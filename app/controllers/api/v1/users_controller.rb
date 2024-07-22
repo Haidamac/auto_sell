@@ -31,7 +31,6 @@ class Api::V1::UsersController < ApplicationController
     authorize @user
 
     if @user.save
-      #UserMailer.user_welcome(@user).deliver_later
       render json: @user, status: :created
     else
       render json: { errors: @user.errors.full_messages },
