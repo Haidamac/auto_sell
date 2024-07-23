@@ -4,7 +4,7 @@
 
 *Note!!! Change ```database.example.yml``` to ```database.yml``` and provide your login and password for Postgresql DB*
 
-You also can to fill DB with training data wuth:
+You also can to fill DB with training data with:
 ```
 rails db:seed
 ```
