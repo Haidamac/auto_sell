@@ -21,7 +21,7 @@ RSpec.describe 'api/v1/authentication', type: :request do
                   required: %i[email password]
                 }
 
-        context 'when credentials are valid' do
+      context 'when credentials are valid' do
         before do
           post '/api/v1/auth/login', params: { email: user.email, password: 'Password123!' }
         end

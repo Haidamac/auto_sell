@@ -23,9 +23,9 @@ class Api::V1::CarsController < ApplicationController
     if @cars
       render json: { data: @cars.map do |car|
                              car.as_json.merge(images: car.images.map do |image|
-                                                                        url_for(image)
-                                                                      end)
-                   end }, status: :ok
+                                                         url_for(image)
+                                                       end)
+                           end }, status: :ok
     else
       render json: @cars.errors, status: :bad_request
     end

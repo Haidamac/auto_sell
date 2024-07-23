@@ -20,7 +20,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def permitted_attributes
-      [:name, :phone]
+    %i[name phone]
   end
 
   def index?

@@ -17,8 +17,8 @@ RSpec.describe 'api/v1/cars', type: :request do
                 description: 'Filter on status: pending/rejected/approved'
 
       let(:Authorization) { headers['Authorization'] }
-      let!(:car1) { create(:car, user: user, brand: 'BMW') }
-      let!(:car2) { create(:car, user: user, brand: 'Tesla') }
+      let!(:car1) { create(:car, user:, brand: 'BMW') }
+      let!(:car2) { create(:car, user:, brand: 'Tesla') }
       let(:user_id) { nil }
       let(:status) { 'pending' }
 
@@ -67,7 +67,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:car) { attributes_for(:car).merge(user_id: user.id) }
 
         before do
-          post '/api/v1/cars', params: { car: car }, headers: headers
+          post '/api/v1/cars', params: { car: }, headers:
         end
 
         it 'should return status response' do
@@ -103,7 +103,7 @@ RSpec.describe 'api/v1/cars', type: :request do
   path '/api/v1/cars/{id}' do
     parameter name: :id, in: :path, type: :string, description: 'car id'
     let(:Authorization) { headers['Authorization'] }
-    let!(:car) { create(:car, user: user) }
+    let!(:car) { create(:car, user:) }
 
     get('show car advert - approved for all / pending and rejected for owner and admins') do
       tags 'Car Adverts'

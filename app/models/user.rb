@@ -23,7 +23,7 @@ class User < ApplicationRecord
                        on: :create
   validates :name, presence: true, length: { minimum: 3, maximum: 50 }
 
-  enum role: %i[participant admin]  
+  enum role: %i[participant admin]
 
   scope :role_filter, ->(role) { where(role:) }
 end

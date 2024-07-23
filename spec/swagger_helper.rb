@@ -31,7 +31,7 @@ RSpec.configure do |config|
         { name: 'Sellers Cars',
           description: 'operate with car adverts by sellers' },
         { name: 'Admins Cars',
-          description: 'operate with car adverts by admins' },
+          description: 'operate with car adverts by admins' }
       ],
       paths: {},
       servers: [

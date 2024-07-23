@@ -22,49 +22,49 @@ RSpec.describe 'api/v1/password', type: :request do
                   required: [:email]
                 }
 
-                let(:email) { 'test@example.com' }
+      let(:email) { 'test@example.com' }
 
-        context 'when email is present' do
-          before do
-            post '/api/v1/password/forgot', params: { email: email }, headers: headers
-          end
-
-          it 'returns a status code 200' do
-            expect(response).to have_http_status(:ok)
-          end
-
-          it 'returns a reset password token' do
-            json = JSON.parse(response.body)
-            expect(json['reset_password_token']).to be_present
-          end
+      context 'when email is present' do
+        before do
+          post '/api/v1/password/forgot', params: { email: }, headers:
         end
 
-        context 'when email is not present' do
-          before do
-            post '/api/v1/password/forgot', params: { email: '' }, headers: headers
-          end
-
-          it 'returns an error message' do
-            json = JSON.parse(response.body)
-            expect(json['error']).to eq('Email not present')
-          end
+        it 'returns a status code 200' do
+          expect(response).to have_http_status(:ok)
         end
 
-        context 'when email is not found' do
-          before do
-            post '/api/v1/password/forgot', params: { email: 'nonexistent@example.com' }, headers: headers
-          end
-
-          it 'returns a status code 404' do
-            expect(response).to have_http_status(:not_found)
-          end
-
-          it 'returns an error message' do
-            json = JSON.parse(response.body)
-            expect(json['error']).to include('Email address not found. Please check and try again.')
-          end
+        it 'returns a reset password token' do
+          json = JSON.parse(response.body)
+          expect(json['reset_password_token']).to be_present
         end
-     end
+      end
+
+      context 'when email is not present' do
+        before do
+          post '/api/v1/password/forgot', params: { email: '' }, headers:
+        end
+
+        it 'returns an error message' do
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq('Email not present')
+        end
+      end
+
+      context 'when email is not found' do
+        before do
+          post '/api/v1/password/forgot', params: { email: 'nonexistent@example.com' }, headers:
+        end
+
+        it 'returns a status code 404' do
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it 'returns an error message' do
+          json = JSON.parse(response.body)
+          expect(json['error']).to include('Email address not found. Please check and try again.')
+        end
+      end
+    end
   end
 
   path '/api/v1/password/reset' do
@@ -89,13 +89,13 @@ RSpec.describe 'api/v1/password', type: :request do
         let(:new_password) { 'NewPassword123!' }
         let(:reset_params) do
           {
-            token: token,
-            new_password: new_password
+            token:,
+            new_password:
           }
         end
 
         before do
-          post '/api/v1/password/reset', params: reset_params, headers: headers
+          post '/api/v1/password/reset', params: reset_params, headers:
         end
 
         it 'returns a status code 200' do
@@ -110,7 +110,7 @@ RSpec.describe 'api/v1/password', type: :request do
 
       context 'when token is invalid' do
         before do
-          post '/api/v1/password/reset', params: { token: 'invalid_token', password: 'NewPassword123!', email: user.email }, headers: headers
+          post '/api/v1/password/reset', params: { token: 'invalid_token', password: 'NewPassword123!', email: user.email }, headers:
         end
 
         it 'returns an error message' do
@@ -121,7 +121,7 @@ RSpec.describe 'api/v1/password', type: :request do
 
       context 'when email is missing' do
         before do
-          post '/api/v1/password/reset', params: { token: token, password: 'NewPassword123!' }, headers: headers
+          post '/api/v1/password/reset', params: { token:, password: 'NewPassword123!' }, headers:
         end
 
         it 'returns an error message' do
@@ -159,7 +159,8 @@ RSpec.describe 'api/v1/password', type: :request do
 
       context 'when old password is correct and new passwords match' do
         before do
-          put '/api/v1/password/update', params: { old_password: old_password, new_password: new_password, confirm_password: confirm_password }, headers: headers
+          put '/api/v1/password/update', params: { old_password:, new_password:, confirm_password: },
+                                         headers:
         end
 
         it 'returns a status code 200' do
@@ -174,7 +175,8 @@ RSpec.describe 'api/v1/password', type: :request do
 
       context 'when old password is incorrect' do
         before do
-          put '/api/v1/password/update', params: { old_password: 'wrong_password', new_password: new_password, confirm_password: confirm_password }, headers: headers
+          put '/api/v1/password/update', params: { old_password: 'wrong_password', new_password:, confirm_password: },
+                                         headers:
         end
 
         it 'returns a status code 422' do
@@ -189,7 +191,8 @@ RSpec.describe 'api/v1/password', type: :request do
 
       context 'when new passwords do not match' do
         before do
-          put '/api/v1/password/update', params: { old_password: old_password, new_password: 'NewPassword123', confirm_password: 'DifferentPassword123' }, headers: headers
+          put '/api/v1/password/update',
+              params: { old_password:, new_password: 'NewPassword123', confirm_password: 'DifferentPassword123' }, headers:
         end
 
         it 'returns a status code 422' do

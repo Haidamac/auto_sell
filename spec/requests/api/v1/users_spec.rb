@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/users', type: :request do
-
   path '/api/v1/users' do
     get('list all users') do
       tags 'Users Admin'
@@ -133,7 +132,7 @@ RSpec.describe 'api/v1/users', type: :request do
                   type: :object,
                   properties: {
                     name: { type: :string },
-                    phone: { type: :string },
+                    phone: { type: :string }
                   }
                 }
 

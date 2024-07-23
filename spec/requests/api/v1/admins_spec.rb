@@ -35,9 +35,9 @@ RSpec.describe Api::V1::AdminsController, type: :controller do
 
     context 'with invalid attributes' do
       it 'does not create a new admin' do
-        expect {
+        expect do
           post :create_admin, params: invalid_attributes
-        }.not_to change(User, :count)
+        end.not_to change(User, :count)
       end
 
       it 'returns an error status' do
@@ -74,4 +74,3 @@ RSpec.describe Api::V1::AdminsController, type: :controller do
     end
   end
 end
-
