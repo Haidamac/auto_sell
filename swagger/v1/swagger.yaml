@@ -111,12 +111,10 @@ paths:
       - jwt_auth: []
       parameters: []
       responses:
-        '201':
-          description: successful created
+        '200':
+          description: ok
         '401':
           description: unauthorized
-        '422':
-          description: invalid request
       requestBody:
         content:
           multipart/form-data:
@@ -466,7 +464,7 @@ servers:
 - url: http://{defaultHost}
   variables:
     defaultHost:
-      default: 127.0.0.1:3000
+      default: localhost:3000
 components:
   securitySchemes:
     jwt_auth:

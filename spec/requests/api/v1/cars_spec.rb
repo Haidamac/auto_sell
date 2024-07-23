@@ -66,10 +66,16 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:Authorization) { headers['Authorization'] }
         let(:car) { attributes_for(:car).merge(user_id: user.id) }
 
-        run_test! do
+        before do
+          post '/api/v1/cars', params: { car: car }, headers: headers
+        end
+
+        it 'should return status response' do
           expect(response.status).to eq(200)
           json = JSON.parse(response.body).deep_symbolize_keys
         end
+
+        run_test!
       end
 
       response(401, 'unauthorized') do
@@ -81,16 +87,16 @@ RSpec.describe 'api/v1/cars', type: :request do
         end
       end
 
-      # response(422, 'invalid request') do
-      #   let(:Authorization) { headers['Authorization'] }
-      #   let(:car) do
-      #     { brand: nil, car_model: '', body: '', mileage: nil, color: '', price: nil, fuel: '', year: nil, volume: nil, user_id: user.id }
-      #   end
+      response(422, 'invalid request') do
+        let(:Authorization) { headers['Authorization'] }
+        let(:car) do
+          { brand: nil, car_model: '', body: '', mileage: nil, color: '', price: nil, fuel: '', year: nil, volume: nil, user_id: user.id }
+        end
 
-      #   run_test! do
-      #     expect(response.status).to eq(422)
-      #   end
-      # end
+        run_test! do
+          expect(response.status).to eq(422)
+        end
+      end
     end
   end
 

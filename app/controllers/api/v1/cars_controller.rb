@@ -93,7 +93,7 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def car_params
-    params.permit(:brand, :car_model, :body, :mileage, :color, :price, :fuel, :year, :volume, images: [])
+    params.require(:car).permit(:brand, :car_model, :body, :mileage, :color, :price, :fuel, :year, :volume, images: [])
   end
 
   def edit_car_params
